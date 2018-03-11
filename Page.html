@@ -44,25 +44,23 @@
   <hr width="95%">
   <div class="container">
     <h3 id="Title"></h3>
-
-    <div class="block form-group">
-      <form>
-        <input type="button" class="action" value="" onclick="send_CreateDiagram();">
-      </form>
-    </div>
-  </div>
-  <!--英語対応する -->
-  <div class="container">
-   <h3>手順</h3>
-   <ol>
-     <li>Listシートに情報を入力</li>
-     <li>実行をクリック</li>
+    <ol>
+     <li id="step_one"></li>
+     <li id="step_two"></li>
    </ol>
- </div>
+   <div class="block form-group">
+    <form>
+      <input type="button" class="action" value="" onclick="send_CreateDiagram();">
+    </form>
+  </div>
+
+  
+</div>
 
 
- <hr width="95%">
- <div class="container">
+
+<hr width="95%">
+<div class="container">
   <div id="msg"></div>
   <p id="confirm"> </p>
 </div>
@@ -83,6 +81,10 @@
   var linkHowto = lang === 'ja' ? '#' : 'https://github.com/takuya0206/precedence_diagram_method';
   var textTitle = lang === 'ja' ? 'プレシデンス・ダイアグラムの作成' : 'Create Precedence Diagram';
   var textButton = lang === 'ja' ? '実行' : 'Done';
+  var textStep_title = lang === 'ja' ? '手順' : 'Step';
+  var textStep_one = lang === 'ja' ? 'Listシートに必要な情報を入力' : 'Input necessary information into the List sheet';
+  var textStep_two = lang === 'ja' ? '実行をクリック' : 'Click Done';
+  
 
   $('#Donation').text(textDonation);
   $('#Inquire').text(textInquire);
@@ -90,6 +92,10 @@
   $('#Howto').text(textHowto);
   $('#Howto').attr("href", linkHowto);
   $('#Title').text(textTitle);
+  $('#step_title').text(textStep_title);
+  $('#step_one').text(textStep_one);
+  $('#step_two').text(textStep_two);
+  
 
   $('.action').each(function(){
     $(this).val(textButton);
