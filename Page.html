@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+  <style>
+  .container {
+    padding: 0px 10px 10px;
+  }
+  .navi{
+    overflow: hidden;
+    margin: 8px 0px;
+
+  }
+  .navi li{
+    margin-right: 5px;
+    list-style: none;
+    float: right;
+  }
+  .navi a{
+   padding: 0px 3px;
+   display: block;
+   text-align: center;
+ }
+
+ .link {
+  color: #15c;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+</style>
+</head>
+<body>
+  <ul class="navi">
+    <li id="Donation" class="link"></li>
+    <li><a id="Inquire" href="" target=""></a></li>
+    <li><a id="Howto" href="" target=""></a></li>
+  </ul>
+  <hr width="95%">
+  <div class="container">
+    <h3 id="Title"></h3>
+
+    <div class="block form-group">
+      <form>
+        <input type="button" class="action" value="" onclick="send_CreateDiagram();">
+      </form>
+    </div>
+  </div>
+  <!--英語対応する -->
+  <div class="container">
+   <h3>手順</h3>
+   <ol>
+     <li>Listシートに情報を入力</li>
+     <li>実行をクリック</li>
+   </ol>
+ </div>
+
+
+ <hr width="95%">
+ <div class="container">
+  <div id="msg"></div>
+  <p id="confirm"> </p>
+</div>
+
+<div class="sidebar bottom">
+  <span class="gray">Precedence Diagram Method by <a href="https://twitter.com/takuya0206" target="">Takuya Tokiwa</a></span>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+
+
+  var lang = (window.navigator.languages && window.navigator.languages[0]) || window.navigator.language || window.navigator.userLanguage || window.navigator.browserLanguage;
+  var textDonation = lang === 'ja' ? '投げ銭' : 'Donation';
+  var textInquire = lang === 'ja' ? '問い合せ' : 'Inquire';
+  var textHowto = lang === 'ja' ? '使い方' : 'How to Use';
+  var linkInquire = 'https://goo.gl/forms/VNjaiPdHLMObnif93';
+  var linkHowto = lang === 'ja' ? '#' : 'https://github.com/takuya0206/precedence_diagram_method';
+  var textTitle = lang === 'ja' ? 'プレシデンス・ダイアグラムの作成' : 'Create Precedence Diagram';
+  var textButton = lang === 'ja' ? '実行' : 'Done';
+
+  $('#Donation').text(textDonation);
+  $('#Inquire').text(textInquire);
+  $('#Inquire').attr("href", linkInquire);
+  $('#Howto').text(textHowto);
+  $('#Howto').attr("href", linkHowto);
+  $('#Title').text(textTitle);
+
+  $('.action').each(function(){
+    $(this).val(textButton);
+  });
+
+
+
+
+  $('#Donation').on( 'click', function(){
+    google.script.run.showPrompt();
+  });
+
+
+
+  function send_CreateDiagram(){
+    startWait();
+    google.script.run
+    .withSuccessHandler(successMsg)
+    .withFailureHandler(errorMsg)
+    .createDiagram();
+  }
+
+
+
+  function startWait(){
+    $('#confirm').text('Please wait...');
+    return;
+  };
+
+  function removeMsg(){
+    $('#confirm').text('');
+    return;
+  };
+
+  function successMsg(){
+    $('#confirm').text('Successfully done');
+    setTimeout(removeMsg, 4000);
+  };
+
+  function errorMsg(){
+    $('#confirm').text('System error');
+    setTimeout(removeMsg, 4000);
+  };
+
+</script>
+</body>
+</html>
+
+
