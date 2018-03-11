@@ -33,7 +33,7 @@ function askEnabled(){
 function showSidebar() {
   Logger.log('showSidebar start');
   var html = HtmlService.createHtmlOutputFromFile('Page')
-  .setTitle('Precedence Diagram Generator')
+  .setTitle('Precedence Diagram Method')
   .setWidth(300);
   SpreadsheetApp.getUi().showSidebar(html);
 };
