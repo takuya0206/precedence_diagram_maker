@@ -50,11 +50,10 @@
    </ol>
    <div class="block form-group">
     <form>
+      <input type="text" id="form_text" placeholder="Project Name..."/>
       <input type="button" class="action" value="" onclick="send_CreateDiagram();">
     </form>
   </div>
-
-  
 </div>
 
 
@@ -95,7 +94,6 @@
   $('#step_title').text(textStep_title);
   $('#step_one').text(textStep_one);
   $('#step_two').text(textStep_two);
-  
 
   $('.action').each(function(){
     $(this).val(textButton);
@@ -111,11 +109,12 @@
 
 
   function send_CreateDiagram(){
+    var text = $('#form_text').val();
     startWait();
     google.script.run
     .withSuccessHandler(successMsg)
     .withFailureHandler(errorMsg)
-    .createDiagram();
+    .createDiagram(text);
   }
 
 

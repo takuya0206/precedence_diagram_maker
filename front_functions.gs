@@ -1,8 +1,8 @@
-function createDiagram(){
+function createDiagram(text_title){
   var list = getListSheet();
   var diagram = getDiagramSheet();
   if(!diagram){
-    var ss = getSpreadSheet();
+    var ss = getSpreadSheet(); 
     ss.insertSheet('diagram', 2);
     initForDiagram();
     diagram = getDiagramSheet()
@@ -58,6 +58,10 @@ function createDiagram(){
         count += 1;
       };
       diagram.getRange(endPos.row-1, endPos.col, 1, 1).setValue(text);
+      //set title if any
+      if(text_title != ''){
+        diagram.getRange(1, 1).setValue(text_title).setFontSize(36).setFontWeight("bold");
+      };
     };
   };
 };
