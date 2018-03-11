@@ -61,3 +61,41 @@ function createDiagram(){
     };
   };
 };
+
+
+function showPrompt(){
+  Logger.log('showPrompt start');
+  var memo = PropertiesService.getDocumentProperties();
+  var lang = memo.getProperty('lang');
+  var htmlString = '';
+  var msg = lang === 'ja' ? '投げ銭のお願い' : 'Donation'
+  if(lang === 'ja'){
+    htmlString =
+    '<link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">' +
+    '<div>' +
+    '<p>よろしければ投げ銭をお願いします。Precedence Diagram Methodはフリーツールですが、ユーザーの皆様の暖かい支援によって開発が成り立っています。どうぞよろしくお願いします。</p>' +
+    '<br />' +
+    '<input type="button" class="share" value="Amazon" onclick="window.open(\'http://amzn.asia/bAlH4Wk\')">　 ' +
+    '<input type="button" class="action" value="PayPal" onclick="window.open(\'https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YUYUT2MH5UFA8\')">　 ' +
+    '<input type="button" value="Close" onclick="google.script.host.close()">' +
+    '</div>';
+  } else {
+    htmlString =
+    '<link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">' +
+    '<div>' +
+    '<p>Please pay add-on fee if you like Precedence Diagram Method. We appreciate your warm and kind support.</p>' +
+    '<br />' +
+    '<input type="button" class="action" value="PayPal" onclick="window.open(\'https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YUYUT2MH5UFA8\')">  ' +
+    ' <input type="button" value="Close" onclick="google.script.host.close()">' +
+    '</div>';
+  }
+
+  var htmlOutput = HtmlService
+  .createHtmlOutput(htmlString)
+  .setSandboxMode(HtmlService.SandboxMode.IFRAME)
+  .setHeight(140);
+
+  SpreadsheetApp
+  .getUi()
+  .showModalDialog(htmlOutput, msg);
+};
