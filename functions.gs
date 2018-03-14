@@ -45,18 +45,6 @@ function init(){
   var lang = memo.getProperty('lang');
   var ss = getSpreadSheet();
   var list = getListSheet();
-  var msg = lang === 'ja' ? '既にListシートが存在します。これまでの内容を消して、新たに作成を行いますか？' : 'The List sheet already exists. Will you delete the existing one and create new one?';
-  if(!list){
-    ss.insertSheet('list', 1);
-    list = getListSheet();
-  } else {
-    var isComfirmed = Browser.msgBox(msg, Browser.Buttons.YES_NO);
-    if(isComfirmed === 'no'){
-      return true;
-    } else {
-      list.clear();
-    };
-  };
   var rowNum = list.getMaxRows();
   var listItems = lang === 'ja' ? [['ID', 'アクティビティ一覧','期間','先行ID', '関係性', 'リード / ラグ'],
   ['id', 'activity', 'duration', 'precedentAct', 'relationship', 'L']
@@ -462,4 +450,33 @@ function checkUnusedId(data, index){
   };
 };
 
+
+function makeSampleProject(){
+  Logger.log('start makeSampleProject');
+  var list = getListSheet();
+  var memo = PropertiesService.getDocumentProperties();
+  var lang = memo.getProperty('lang');
+  var isComfirmed = true;
+  var data = lang === 'ja' ?
+  [[1, '要件定義', 3, 0, '', ''], [2, '設計', 5, 1, 'FS', 0], [3, 'デザイン', 3, 2, 'FS', 0], [4, 'コーディング', 5, 3, 'FS', 0], [5, 'サーバー環境構築', 3, 2, 'FS', 0], [6, '公開', 1, '4,5', 'FS,FS', '0,0']]:
+  [[1, 'Requirement Definition', 3, 0, '', ''], [2, 'Basic Design', 5, 1, 'FS', 0], [3, 'UI Design', 3, 2, 'FS', 0], [4, 'Coding', 5, 3, 'FS', 0], [5, 'Building Server', 3, 2, 'FS', 0], [6, 'Release', 1, '4,5', 'FS,FS', '0,0']];
+  var title_text = lang === 'ja' ? 'サンプルWebサイトの作成' : 'Creating Sample Website';
+  var msg = lang === 'ja' ? '既にListシートが存在します。これまでの内容を消して、新たに作成を行いますか？' : 'The List sheet already exists. Will you delete the existing one and create new one?';
+  if(!list){
+    ss.insertSheet('list', 1);
+    list = getListSheet();
+  } else {
+    isComfirmed = Browser.msgBox(msg, Browser.Buttons.YES_NO);
+    if(isComfirmed === 'yes'){
+      list.clear();
+    } else {
+      isComfirmed = false;
+    };
+  };
+  if(isComfirmed){
+    list.getRange(3,1,data.length, data[0].length).setValues(data);
+    init();
+    createDiagram(title_text);
+  };
+};
 
