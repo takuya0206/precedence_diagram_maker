@@ -14,7 +14,7 @@ Access the above URL, log in your Google account, and click "＋ Free."
 
 * Automatically create a network chart in PDM
 * Automatically calculate total duration of projects
-* show critical path in red cololr
+* Show critical path in red color
 
 ### Specification
 

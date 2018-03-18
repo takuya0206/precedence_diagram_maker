@@ -24,7 +24,7 @@ function getListSheet(){
 function askEnabled(){
   var lang = Session.getActiveUserLocale();
   var title = 'Precedence Diagram Method';
-  var msg = lang === 'ja' ? 'Precedence Diagram Methodが有効になりました。もしアドオンのメニューに「プレシデンス・ダイアグラムの作成」が表示されていない場合は一度リロードをお願いします。' : 'Precedence Diagram Method has been enabled. Just in case that the menu: "Create Precedence Diagram" does not appear, please reload this spreadsheet.';
+  var msg = lang === 'ja' ? 'Precedence Diagram Makerが有効になりました。もしアドオンのメニューに「プレシデンス・ダイアグラムの作成」が表示されていない場合は一度リロードをお願いします。' : 'Precedence Diagram Maker has been enabled. Just in case that the menu: "Create Precedence Diagram" does not appear, please reload this spreadsheet.';
   var ui = SpreadsheetApp.getUi();
   ui.alert(title, msg, ui.ButtonSet.OK);
 };
@@ -33,9 +33,40 @@ function askEnabled(){
 function showSidebar() {
   Logger.log('showSidebar start');
   var html = HtmlService.createHtmlOutputFromFile('Page')
-  .setTitle('Precedence Diagram Method')
+  .setTitle('Precedence Diagram Maker')
   .setWidth(300);
   SpreadsheetApp.getUi().showSidebar(html);
+};
+
+
+function makeSampleProject(){
+  Logger.log('start makeSampleProject');
+  var ss = getSpreadSheet();
+  var list = getListSheet();
+  var memo = PropertiesService.getDocumentProperties();
+  var lang = memo.getProperty('lang');
+  var isComfirmed = true;
+  var data = lang === 'ja' ?
+  [[1, '要件定義', 3, 0, '', ''], [2, '設計', 5, 1, 'FS', 0], [3, 'デザイン', 3, 2, 'FS', 0], [4, 'コーディング', 5, 3, 'FS', 0], [5, 'サーバー構築', 3, 2, 'FS', 0], [6, '公開', 1, '4,5', 'FS,FS', '0,0']]:
+  [[1, 'Requirement Definition', 3, 0, '', ''], [2, 'Base Design', 5, 1, 'FS', 0], [3, 'UI Design', 3, 2, 'FS', 0], [4, 'Coding', 5, 3, 'FS', 0], [5, 'Building Server', 3, 2, 'FS', 0], [6, 'Release', 1, '4,5', 'FS,FS', '0,0']];
+  var title_text = lang === 'ja' ? 'サンプルWebサイトの作成' : 'Creating Sample Website';
+  var msg = lang === 'ja' ? '既にListシートが存在します。これまでの内容を消して、新たに作成を行いますか？' : 'The List sheet already exists. Will you delete the existing one and create new one?';
+  if(!list){
+    ss.insertSheet('list', 1);
+    list = getListSheet();
+  } else {
+    isComfirmed = Browser.msgBox(msg, Browser.Buttons.YES_NO);
+    if(isComfirmed === 'yes'){
+      list.clear();
+    } else {
+      isComfirmed = false;
+    };
+  };
+  if(isComfirmed){
+    list.getRange(3,1,data.length, data[0].length).setValues(data);
+    init();
+    createDiagram(title_text);
+  };
 };
 
 
@@ -105,11 +136,15 @@ function initForDiagram(){
 
 function makeBox(row, col, id, title, duration, ES, EF, LS, LF){
   Logger.log('makeBox start');
+  var memo = PropertiesService.getDocumentProperties();
+  var lang = memo.getProperty('lang');
   var diagram = getDiagramSheet();
   var range = diagram.getRange(row, col, 4, 4);
   var firstRow = diagram.getRange(row, col, 1, 4);
   var thirdRow = diagram.getRange(row+2, col, 1, 4);
-  var contents = [['ID', id, 'Duration', duration],['ES', ES, 'EF', EF], [title,'','',''],['LS', LS, 'LF', LF]];
+  var contents = lang === 'ja' ? 
+  [['ID', id, '期間', duration],['最早開始', ES, '最早終了', EF], [title,'','',''],['最遅開始', LS, '最遅終了', LF]]:
+  [['ID', id, 'Duration', duration],['ES', ES, 'EF', EF], [title,'','',''],['LS', LS, 'LF', LF]];
   var color = '';
   //show critical path in red color
   if(ES === LS && EF === LF){
@@ -396,6 +431,9 @@ function analyzeList(data){
 function checkLength(data, indexs){
   var list = getListSheet();
   var isValid = true;
+  var memo = PropertiesService.getDocumentProperties();
+  var lang = memo.getProperty('lang');
+  var msg = lang === 'ja' ? '赤色のセルの入力が適切ではありません': 'There is invaild input. Please check red cells';
   for(var i = 2, len = data.length; i < len; i++){
     var isSame = false;
     for(var key in indexs){
@@ -419,20 +457,27 @@ function checkLength(data, indexs){
   if(isValid){
     return true;
   } else {
-    throw new Error('There is invaild input. Please check red cells');
+    throw new Error(msg);
   };
 };
 
 
 function checkUnusedId(data, index){
+  var list = getListSheet();
   var id = [];
   var precedentId = [];
   var unused = [];
+  var memo = PropertiesService.getDocumentProperties();
+  var lang = memo.getProperty('lang');
+  var msg = lang === 'ja' ? 'が使われていません。使用しないIDは最後のアクティビティだけにしてください': 'are not used. Unsed ID must be only the last activity.';
   for(var i = 2, len = data.length; i < len; i++){
     //input id
     id.push(data[i][0]);
     //input precedent id
     for(var j = 0, len2 = data[i][index].length; j < len2; j++){
+      if(data[i][index] == ''){
+        list.getRange(i+1, index+1).setBackground('red');
+      }
       precedentId.push(parseInt(data[i][index][j]));
     };
   };
@@ -444,39 +489,10 @@ function checkUnusedId(data, index){
     };
   };
   if(unused.length > 1){
-    throw new Error('Error: ID ' + unused + ' are not used.');
+    throw new Error('ID ' + unused + msg);
   } else {
     return true;
   };
 };
 
-
-function makeSampleProject(){
-  Logger.log('start makeSampleProject');
-  var list = getListSheet();
-  var memo = PropertiesService.getDocumentProperties();
-  var lang = memo.getProperty('lang');
-  var isComfirmed = true;
-  var data = lang === 'ja' ?
-  [[1, '要件定義', 3, 0, '', ''], [2, '設計', 5, 1, 'FS', 0], [3, 'デザイン', 3, 2, 'FS', 0], [4, 'コーディング', 5, 3, 'FS', 0], [5, 'サーバー環境構築', 3, 2, 'FS', 0], [6, '公開', 1, '4,5', 'FS,FS', '0,0']]:
-  [[1, 'Requirement Definition', 3, 0, '', ''], [2, 'Basic Design', 5, 1, 'FS', 0], [3, 'UI Design', 3, 2, 'FS', 0], [4, 'Coding', 5, 3, 'FS', 0], [5, 'Building Server', 3, 2, 'FS', 0], [6, 'Release', 1, '4,5', 'FS,FS', '0,0']];
-  var title_text = lang === 'ja' ? 'サンプルWebサイトの作成' : 'Creating Sample Website';
-  var msg = lang === 'ja' ? '既にListシートが存在します。これまでの内容を消して、新たに作成を行いますか？' : 'The List sheet already exists. Will you delete the existing one and create new one?';
-  if(!list){
-    ss.insertSheet('list', 1);
-    list = getListSheet();
-  } else {
-    isComfirmed = Browser.msgBox(msg, Browser.Buttons.YES_NO);
-    if(isComfirmed === 'yes'){
-      list.clear();
-    } else {
-      isComfirmed = false;
-    };
-  };
-  if(isComfirmed){
-    list.getRange(3,1,data.length, data[0].length).setValues(data);
-    init();
-    createDiagram(title_text);
-  };
-};
 

@@ -66,7 +66,7 @@
 </div>
 
 <div class="sidebar bottom">
-  <span class="gray">Precedence Diagram Method by <a href="https://twitter.com/takuya0206" target="">Takuya Tokiwa</a></span>
+  <span class="gray">Precedence Diagram Maker by <a href="https://twitter.com/takuya0206" target="">Takuya Tokiwa</a></span>
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -78,7 +78,7 @@
   var textInquire = lang === 'ja' ? '問い合せ' : 'Inquire';
   var textHowto = lang === 'ja' ? '使い方' : 'How to Use';
   var linkInquire = 'https://goo.gl/forms/VNjaiPdHLMObnif93';
-  var linkHowto = lang === 'ja' ? '#' : 'https://github.com/takuya0206/precedence_diagram_method';
+  var linkHowto = lang === 'ja' ? 'http://takuya0206.hateblo.jp/entry/precedence_diagram_method' : 'https://github.com/takuya0206/precedence_diagram_method';
   var textTitle = lang === 'ja' ? 'プレシデンス・ダイアグラムの作成' : 'Create Precedence Diagram';
   var textButton = lang === 'ja' ? '実行' : 'Done';
   var textStep_title = lang === 'ja' ? '手順' : 'Step';
@@ -134,9 +134,10 @@
     setTimeout(removeMsg, 4000);
   };
 
-  function errorMsg(){
-    $('#confirm').text('System error');
-    setTimeout(removeMsg, 4000);
+  function errorMsg(msg){
+    msg = msg === '' ? 'System error' : msg;
+    $('#confirm').text(msg);
+    setTimeout(removeMsg, 5000);
   };
 
 </script>
