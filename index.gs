@@ -24,7 +24,7 @@ function onOpen(e) {
     memo.setProperty('lang', lang);
     var createPD_text = lang === 'ja' ? 'プレシデンス・ダイアグラムの作成' : 'Create Precedence Diagram';
     var sidebar_text = lang === 'ja' ? 'サイドバーの表示' : 'Show Sidebar';
-    menu.addItem(createPD_text, 'init');
+    menu.addItem(createPD_text, 'makeSampleProject');
     menu.addItem(sidebar_text, 'showSidebar');
   };
   menu.addToUi();
@@ -33,7 +33,8 @@ function onOpen(e) {
 
 function onEdit(e) {
   Logger.log('onEdit start');
-  if (e.source.getActiveSheet().getName() === 'list') {
+  var ss = getSpreadSheet()
+  if (ss.getActiveSheet().getName() === 'list') {
     Logger.log('for the list sheet');
     var list = getListSheet();
     var editedRow = e.range.getRow();
@@ -45,6 +46,11 @@ function onEdit(e) {
     var baseRange = list.getRange(1, 1, lastRowOfContents, lastColOfContents);
     var baseData = baseRange.getValues();
     var selectedItem = baseData[1][editedColumn-1];
+
+    //nothing happens if you edit the first and second row
+    if(editedRow === 1 || editedRow === 2){
+      return;
+    };
 
     if(selectedItem === 'activity'){
       //when you enter a new activity, set an ID in ascending order
@@ -65,8 +71,8 @@ function onEdit(e) {
         list.getRange(editedRow, 1, 1, 1).setValue(ary[0]);
       };
       //when you delete an activity, ID will be deleted
-      if(typeof e.value === 'object'){
-        list.getRange(editedRow, 1, 1, 1).setValue('');
+      if(e.range.isBlank()){
+        list.getRange(editedRow, 1, editedLastRow-editedRow+1, 1).setValue('');
       };
     };
     if(selectedItem === 'precedentAct'){
@@ -85,6 +91,9 @@ function onEdit(e) {
       var memo = PropertiesService.getDocumentProperties();
       var lang = memo.getProperty('lang');
       var text;
+      e.range.clearNote().setBackground('');
+      Logger.log(ary);
+      Logger.log(selectedItem);
       //check whether precedentActs you enter exist
       if(selectedItem === 'precedentAct'){
         var indexOfId = baseData[1].indexOf('id');
@@ -92,13 +101,13 @@ function onEdit(e) {
         if(e.value && e.value != '0'){
           for(var i = 2, len = baseData.length; i < len; i++){
             if(i+1 != editedRow){
-              targets.push(baseData[i][indexOfId]);
+              targets.push(baseData[i][indexOfId].toString());
             };
           };
           for(var i = 0, len = ary.length; i < len; i++){
-            if(targets.indexOf(parseInt(ary[i])) < 0){
+            if(targets.indexOf(ary[i]) < 0){
               text = lang === 'ja' ? '該当する先行タスクがありません' : 'The precedent ID you entered does not exist';
-              Browser.msgBox(text);
+              e.range.setNote(text).setBackground('red');
             };
           };
         };
@@ -111,7 +120,7 @@ function onEdit(e) {
           val = ary[i];
           if(val != 'FS' && val != 'SS' && val != 'SF' && val != 'FF'){
             text = lang === 'ja' ? '値がFS, SS, SF, FFのいずれかではありません' : 'The value has to be FS, SS, SF, or FF.';
-            Browser.msgBox(text);
+            e.range.setNote(text).setBackground('red');
           };
         };
       };
@@ -121,7 +130,7 @@ function onEdit(e) {
         for(var i = 0, len = ary.length; i < len; i++){
           if(!isNum(ary[i])){
             text = lang === 'ja' ? '値が数字ではありません' : 'The value has to be number.';
-            Browser.msgBox(text);
+            e.range.setNote(text).setBackground('red');
           };
         };
       };

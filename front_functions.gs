@@ -2,7 +2,7 @@ function createDiagram(text_title){
   var list = getListSheet();
   var diagram = getDiagramSheet();
   if(!diagram){
-    var ss = getSpreadSheet(); 
+    var ss = getSpreadSheet();
     ss.insertSheet('diagram', 2);
     initForDiagram();
     diagram = getDiagramSheet()
@@ -54,7 +54,7 @@ function createDiagram(text_title){
           isPositive = '+';
         };
         partition = count > 0 ? '  /  ' : '';
-        text += partition + '(ID_' + data[key]['precedentid'][j] + ') R: ' + data[key]['relationship'][j] + ', L: ' + isPositive + data[key]['L'][j];
+        text += partition + '(ID_' + data[key]['precedentid'][j] + ') ' + data[key]['relationship'][j] + ', ' + isPositive + data[key]['L'][j];
         count += 1;
       };
       diagram.getRange(endPos.row-1, endPos.col, 1, 1).setValue(text);
@@ -77,7 +77,7 @@ function showPrompt(){
     htmlString =
     '<link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">' +
     '<div>' +
-    '<p>よろしければ投げ銭をお願いします。Precedence Diagram Methodはフリーツールですが、ユーザーの皆様の暖かい支援によって開発が成り立っています。どうぞよろしくお願いします。</p>' +
+    '<p>よろしければ投げ銭をお願いします。Precedence Diagram Makerはフリーツールですが、ユーザーの皆様の暖かい支援によって開発が成り立っています。どうぞよろしくお願いします。</p>' +
     '<br />' +
     '<input type="button" class="share" value="Amazon" onclick="window.open(\'http://amzn.asia/bAlH4Wk\')">　 ' +
     '<input type="button" class="action" value="PayPal" onclick="window.open(\'https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YUYUT2MH5UFA8\')">　 ' +
@@ -87,7 +87,7 @@ function showPrompt(){
     htmlString =
     '<link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">' +
     '<div>' +
-    '<p>Please pay add-on fee if you like Precedence Diagram Method. We appreciate your warm and kind support.</p>' +
+    '<p>Please pay add-on fee if you like Precedence Diagram Maker. We appreciate your warm and kind support.</p>' +
     '<br />' +
     '<input type="button" class="action" value="PayPal" onclick="window.open(\'https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YUYUT2MH5UFA8\')">  ' +
     ' <input type="button" value="Close" onclick="google.script.host.close()">' +

@@ -469,7 +469,7 @@ function checkUnusedId(data, index){
   var unused = [];
   var memo = PropertiesService.getDocumentProperties();
   var lang = memo.getProperty('lang');
-  var msg = lang === 'ja' ? 'が使われていません。使用しないIDは最後のアクティビティだけにしてください': 'are not used. Unsed ID must be only the last activity.';
+  var msg = lang === 'ja' ? 'が使われていません。使用しないIDは最後のアクティビティだけにしてください': 'are not used. Unused ID must be only the last activity.';
   for(var i = 2, len = data.length; i < len; i++){
     //input id
     id.push(data[i][0]);
