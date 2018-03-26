@@ -6,7 +6,7 @@ This is an add-on for Google apps script. You can automatically create a network
 
 ### Installation
 
-Precedence Diagram Maker - Google Sheets add-on
+[Precedence Diagram Maker - Google Sheets add-on](https://chrome.google.com/webstore/detail/precedence-diagram-maker/mapjdikjkobbpmhaeeahjeobhllacjkb?utm_source=permalink)
 
 Access the above URL, log in your Google account, and click "＋ Free."
 
